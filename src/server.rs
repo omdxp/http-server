@@ -1,3 +1,4 @@
+use std::io::Read;
 use std::net::TcpListener;
 
 pub struct Server {
@@ -15,7 +16,15 @@ impl Server {
                 println!("server running at http://{}", self.addr);
                 loop {
                     match lis.accept() {
-                        Ok((tcp_stream, _)) => {}
+                        Ok((mut tcp_stream, _)) => {
+                            let mut buf = [0; 1024];
+                            match tcp_stream.read(&mut buf) {
+                                Ok(_) => {
+                                    println!("request received: {}", String::from_utf8_lossy(&buf));
+                                }
+                                Err(e) => println!("{:?}", e),
+                            }
+                        }
                         Err(e) => println!("{:?}", e),
                     }
                 }
