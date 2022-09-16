@@ -11,7 +11,15 @@ impl Server {
     pub fn run(&self) {
         let listener = TcpListener::bind(&self.addr);
         match listener {
-            Ok(_) => println!("server running at http://{}", self.addr),
+            Ok(lis) => {
+                println!("server running at http://{}", self.addr);
+                loop {
+                    match lis.accept() {
+                        Ok((tcp_stream, _)) => {}
+                        Err(e) => println!("{:?}", e),
+                    }
+                }
+            }
             Err(e) => println!("{:?}", e),
         }
     }
