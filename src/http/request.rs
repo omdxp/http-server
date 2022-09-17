@@ -3,6 +3,7 @@ use std::{convert::TryFrom, error::Error, fmt::Display, str::Utf8Error};
 use super::method::{Method, MethodError};
 use super::Query;
 
+#[derive(Debug)]
 pub struct Request<'a> {
     path: &'a str,
     query: Option<Query<'a>>,
