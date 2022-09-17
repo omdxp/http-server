@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod http;
 mod server;
 use server::*;
