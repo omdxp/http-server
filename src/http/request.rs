@@ -2,16 +2,16 @@ use std::{convert::TryFrom, error::Error, fmt::Display, str::Utf8Error};
 
 use super::method::{Method, MethodError};
 
-pub struct Request {
-    path: String,
-    query: Option<String>,
+pub struct Request<'a> {
+    path: &'a str,
+    query: Option<&'a str>,
     method: Method,
 }
 
-impl TryFrom<&[u8]> for Request {
+impl<'a> TryFrom<&'a [u8]> for Request<'a> {
     type Error = ParseError;
     // GET /search?name=abcd&sort=1 HTTP/1.1\r\n...HEADERS...
-    fn try_from(buf: &[u8]) -> Result<Self, Self::Error> {
+    fn try_from(buf: &'a [u8]) -> Result<Self, Self::Error> {
         let request = std::str::from_utf8(buf)?;
         let (method, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
         let (mut path, request) = get_next_word(request).ok_or(ParseError::InvalidRequest)?;
@@ -22,11 +22,11 @@ impl TryFrom<&[u8]> for Request {
         let method = method.parse::<Method>()?;
         let mut query_string = None;
         if let Some(i) = path.find('?') {
-            query_string = Some(path[i + 1..].to_string());
+            query_string = Some(&path[i + 1..]);
             path = &path[..i];
         }
         Ok(Self {
-            path: path.into(),
+            path,
             query: query_string,
             method,
         })
