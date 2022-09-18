@@ -1,4 +1,4 @@
-use std::{fmt::Display, io::Write, net::TcpStream};
+use std::io::Write;
 
 use super::StatusCode;
 
